@@ -16,6 +16,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.patel.manpatelcbc.model.NewsModelItem
+import com.patel.manpatelcbc.model.NewsModelItems
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -26,9 +27,9 @@ class NewsViewModel(
 ) : AndroidViewModel(app) {
 
 
-    val breakingNews: MutableLiveData<Resource<NewsModel>> = MutableLiveData()
+    val breakingNews: MutableLiveData<Resource<List<NewsModelItems?>>> = MutableLiveData()
     var breakingNewsPage = 1
-    var breakingNewsResponse: NewsModel? = null
+    var breakingNewsResponse: List<NewsModelItems?>? = null
 
     val searchNews: MutableLiveData<Resource<NewsModel>> = MutableLiveData()
     var searchNewsPage = 1
@@ -49,21 +50,25 @@ class NewsViewModel(
         //   safeSearchNewsCall(searchQuery)
     }
 
-    private fun handleBreakingNewsResponse(response: Response<NewsModel>) : Resource<NewsModel> {
-        if(response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                breakingNewsPage++
-                if(breakingNewsResponse == null) {
-                    breakingNewsResponse = resultResponse
-                } else {
-                    val oldNews = breakingNewsResponse?.newsModel
-                    val newNews = resultResponse.newsModel
-                    oldNews?.addAll(newNews)
+    private fun handleBreakingNewsResponse(response: Response<List<NewsModelItems?>?>?) : Resource<List<NewsModelItems?>> {
+        if (response != null) {
+            if(response.isSuccessful) {
+                response.body()?.let { resultResponse ->
+                    breakingNewsPage++
+                    if(breakingNewsResponse == null) {
+                        breakingNewsResponse = resultResponse
+                    } else {
+                        breakingNewsResponse = resultResponse
+    //                    val oldNews = breakingNewsResponse
+    //                    val newNews = resultResponse
+    //                    oldNews?.
+    //                    oldNews?.addAll(newNews)
+                    }
+                    return Resource.Success(breakingNewsResponse ?: resultResponse)
                 }
-                return Resource.Success(breakingNewsResponse ?: resultResponse)
             }
         }
-        return Resource.Error(response.message())
+        return Resource.Error(response!!.message())
     }
 
 

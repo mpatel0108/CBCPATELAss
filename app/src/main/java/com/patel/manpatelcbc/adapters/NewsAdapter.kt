@@ -9,18 +9,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.patel.manpatelcbc.R
 import com.patel.manpatelcbc.model.NewsModelItem
+import com.patel.manpatelcbc.model.NewsModelItems
 import kotlinx.android.synthetic.main.news_item.view.*
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
-    private val differCallback = object : DiffUtil.ItemCallback<NewsModelItem>() {
-        override fun areItemsTheSame(oldItem: NewsModelItem, newItem: NewsModelItem): Boolean {
+    private val differCallback = object : DiffUtil.ItemCallback<NewsModelItems>() {
+        override fun areItemsTheSame(oldItem: NewsModelItems, newItem: NewsModelItems): Boolean {
             return oldItem.title == newItem.title
         }
 
-        override fun areContentsTheSame(oldItem: NewsModelItem, newItem: NewsModelItem): Boolean {
+        override fun areContentsTheSame(oldItem: NewsModelItems, newItem: NewsModelItems): Boolean {
             return oldItem == newItem
         }
     }
@@ -41,12 +42,12 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
         return differ.currentList.size
     }
 
-    private var onItemClickListener: ((NewsModelItem) -> Unit)? = null
+    private var onItemClickListener: ((NewsModelItems) -> Unit)? = null
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val news = differ.currentList[position]
         holder.itemView.apply {
-            Glide.with(this).load(news.images).into(newsImage)
+            Glide.with(this).load(news.images?.square_140).into(newsImage)
             headline.text = news.title
             publishedDate.text = news.readablePublishedAt
 
@@ -57,7 +58,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
         }
     }
 
-    fun setOnItemClickListener(listener: (NewsModelItem) -> Unit) {
+    fun setOnItemClickListener(listener: (NewsModelItems) -> Unit) {
         onItemClickListener = listener
     }
 }

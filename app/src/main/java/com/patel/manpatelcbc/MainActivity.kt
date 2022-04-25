@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,23 +22,25 @@ import kotlinx.android.synthetic.main.item_error_message.*
 
 class MainActivity : AppCompatActivity() {
    lateinit var viewModel: NewsViewModel
-   // private var viewModel: NewsViewModel by viewModels()
+
     lateinit var newsAdapter: NewsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupRecyclerView()
+
         val newsRepository = NewsRepository(NewsDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
-viewModel.breakingNews.observe(this) {
-    when(it) {
+        viewModel.breakingNews.observe(this) {
+           when(it) {
         is Resource.Success -> {
             hideProgressBar()
             hideErrorMessage()
            it.data?.let { newsResponse ->
-                newsAdapter.differ.submitList(newsResponse.newsModel.toList())
-                val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
+                newsAdapter.differ.submitList(newsResponse.toList())
+                val totalPages = newsResponse.size / QUERY_PAGE_SIZE + 2
                 isLastPage = viewModel.breakingNewsPage == totalPages
                 if(isLastPage) {
                     rcvNews.setPadding(0, 0, 0, 0)
@@ -59,36 +60,14 @@ viewModel.breakingNews.observe(this) {
     }
 
 }
-//        viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
-//            when(response) {
-//                is Resource.Success -> {
-//                    hideProgressBar()
-//                    hideErrorMessage()
-//                    response.data?.let { newsResponse ->
-//                        newsAdapter.differ.submitList(newsResponse.newsModel.toList())
-//                        val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
-//                        isLastPage = viewModel.breakingNewsPage == totalPages
-//                        if(isLastPage) {
-//                            rcvNews.setPadding(0, 0, 0, 0)
-//                        }
-//                    }
-//                }
-//                is Resource.Error -> {
-//                    hideProgressBar()
-//                    response.message?.let { message ->
-//                        Toast.makeText(this, "An error occured: $message", Toast.LENGTH_LONG).show()
-//                        showErrorMessage(message)
-//                    }
-//                }
-//                is Resource.Loading -> {
-//                    showProgressBar()
-//                }
-//            }
-//        })
+
         btnRetry.setOnClickListener {
             viewModel.getBreakingNews("news")
         }
+
     }
+
+
 
     private fun hideProgressBar() {
         paginationProgressBar.visibility = View.INVISIBLE
@@ -132,7 +111,7 @@ viewModel.breakingNews.observe(this) {
             val shouldPaginate = isNoErrors && isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                     isTotalMoreThanVisible && isScrolling
             if(shouldPaginate) {
-                viewModel.getBreakingNews("us")
+               viewModel.getBreakingNews("news")
                 isScrolling = false
             }
         }
@@ -144,8 +123,6 @@ viewModel.breakingNews.observe(this) {
             }
         }
     }
-
-
 
 
     private fun setupRecyclerView() {
