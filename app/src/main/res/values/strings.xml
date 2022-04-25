@@ -2,4 +2,5 @@
     <string name="app_name">ManPatelCBC</string>
     <string name="headline">Headline :</string>
     <string name="published_date">Published date :</string>
+    <string name="filter">Filter</string>
 </resources>

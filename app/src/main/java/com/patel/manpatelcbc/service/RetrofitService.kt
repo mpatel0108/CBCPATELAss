@@ -7,11 +7,11 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface RetrofitService {
-//    @GET("items")
-//    suspend fun getTopNews(
-//        @Query("lineupSlug")
-//        lineupSlug: String = "news",
-//    ): Response<NewsModel>
+    @GET("items")
+    suspend fun getTopFilterNews(
+        @Query("type")
+        lineupSlug: String = "stub",
+    ): Response<List<NewsModelItems?>?>?
 
     @GET("items")
     suspend fun getTopNews(

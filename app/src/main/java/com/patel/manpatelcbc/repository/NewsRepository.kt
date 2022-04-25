@@ -11,6 +11,9 @@ class NewsRepository(
     suspend fun getBreakingNews(lineupSlug: String) =
         RetrofitInstance.api.getTopNews(lineupSlug)
 
+    suspend fun getFilterBreakingNews(type: String) =
+        RetrofitInstance.api.getTopFilterNews(type)
+
 //    suspend fun searchNews(searchQuery: String, pageNumber: Int) =
 //        RetrofitInstance.api.searchForNews(searchQuery, pageNumber)
 

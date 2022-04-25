@@ -28,8 +28,13 @@ class NewsViewModel(
 
 
     val breakingNews: MutableLiveData<Resource<List<NewsModelItems?>>> = MutableLiveData()
+
+    val filterBreakingNews: MutableLiveData<Resource<List<NewsModelItems?>>> = MutableLiveData()
     var breakingNewsPage = 1
     var breakingNewsResponse: List<NewsModelItems?>? = null
+
+    var filterBreakingNewsPage = 1
+    var filterBreakingNewsResponse: List<NewsModelItems?>? = null
 
     val searchNews: MutableLiveData<Resource<NewsModel>> = MutableLiveData()
     var searchNewsPage = 1
@@ -45,6 +50,12 @@ class NewsViewModel(
     fun getBreakingNews(lineupSlug: String) = viewModelScope.launch {
            safeBreakingNewsCall(lineupSlug)
     }
+
+    fun getFilterBreakingNews(type: String) = viewModelScope.launch {
+        safeFilterBreakingNewsCall(type)
+    }
+
+
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
         //   safeSearchNewsCall(searchQuery)
@@ -65,6 +76,27 @@ class NewsViewModel(
     //                    oldNews?.addAll(newNews)
                     }
                     return Resource.Success(breakingNewsResponse ?: resultResponse)
+                }
+            }
+        }
+        return Resource.Error(response!!.message())
+    }
+
+    private fun handleFilterBreakingNewsResponse(response: Response<List<NewsModelItems?>?>?) : Resource<List<NewsModelItems?>> {
+        if (response != null) {
+            if(response.isSuccessful) {
+                response.body()?.let { resultResponse ->
+                    filterBreakingNewsPage++
+                    if(filterBreakingNewsResponse == null) {
+                        filterBreakingNewsResponse = resultResponse
+                    } else {
+                        filterBreakingNewsResponse = resultResponse
+                        //                    val oldNews = breakingNewsResponse
+                        //                    val newNews = resultResponse
+                        //                    oldNews?.
+                        //                    oldNews?.addAll(newNews)
+                    }
+                    return Resource.Success(filterBreakingNewsResponse ?: resultResponse)
                 }
             }
         }
@@ -120,6 +152,24 @@ class NewsViewModel(
 //            }
 //        }
 //    }
+
+
+    private suspend fun safeFilterBreakingNewsCall(type: String) {
+        filterBreakingNews.postValue(Resource.Loading())
+        try {
+            if(hasInternetConnection()) {
+                val response = newsRepository.getFilterBreakingNews(type)
+                filterBreakingNews.postValue(handleFilterBreakingNewsResponse(response))
+            } else {
+                filterBreakingNews.postValue(Resource.Error("No internet connection"))
+            }
+        } catch(t: Throwable) {
+            when(t) {
+                is IOException -> filterBreakingNews.postValue(Resource.Error("Network Failure"))
+                else -> filterBreakingNews.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
 
     private suspend fun safeBreakingNewsCall(lineupSlug: String) {
         breakingNews.postValue(Resource.Loading())

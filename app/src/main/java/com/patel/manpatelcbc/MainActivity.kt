@@ -3,6 +3,7 @@ package com.patel.manpatelcbc
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
@@ -61,13 +62,67 @@ class MainActivity : AppCompatActivity() {
 
 }
 
+        viewModel.filterBreakingNews.observe(this) {
+            when(it) {
+                is Resource.Success -> {
+                    hideProgressBar()
+                    hideErrorMessage()
+                    it.data?.let { newsResponse ->
+                        newsAdapter.differ.submitList(newsResponse.toList())
+                        val totalPages = newsResponse.size / QUERY_PAGE_SIZE + 2
+                        isLastPage = viewModel.breakingNewsPage == totalPages
+                        if(isLastPage) {
+                            rcvNews.setPadding(0, 0, 0, 0)
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    hideProgressBar()
+                    it.message?.let { message ->
+                        Toast.makeText(this, "An error occured: $message", Toast.LENGTH_LONG).show()
+                        showErrorMessage(message)
+                    }
+                }
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
+            }
+
+        }
+
+
+
+
+
         btnRetry.setOnClickListener {
             viewModel.getBreakingNews("news")
+        }
+        filterBtn.setOnClickListener {
+   showOptionsDialog()
         }
 
     }
 
+    private fun showOptionsDialog() {
+        val array = arrayOf( "video" ,"stub", "story", "image")
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
 
+
+        builder.setSingleChoiceItems(array, -1) {_, which ->
+            val type = array[which]
+            try {
+                Log.d("mainactivity", "$type  selected.")
+                viewModel.getFilterBreakingNews(type)
+            } catch (e: IllegalArgumentException) {
+
+            }
+            dialog.dismiss()
+        }
+        dialog = builder.create()
+
+        dialog.show()
+    }
 
     private fun hideProgressBar() {
         paginationProgressBar.visibility = View.INVISIBLE
