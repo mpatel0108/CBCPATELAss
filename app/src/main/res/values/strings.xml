@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ManPatelCBC</string>
+    <string name="app_name">CBC</string>
+    <string name="headline">Headline :</string>
+    <string name="published_date">Published date :</string>
 </resources>
