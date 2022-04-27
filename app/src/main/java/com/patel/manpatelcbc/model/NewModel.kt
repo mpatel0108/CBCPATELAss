@@ -23,7 +23,7 @@ data class NewsModelItems(
 )
 
 data class Images(
-    val square_140: String?
+    val imageLarge: String?
 )
 
 data class TypeAttributes(

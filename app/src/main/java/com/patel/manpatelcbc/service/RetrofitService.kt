@@ -5,6 +5,7 @@ import com.patel.manpatelcbc.model.NewsModelItems
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.POST
 
 interface RetrofitService {
     @GET("items")
@@ -18,4 +19,5 @@ interface RetrofitService {
         @Query("lineupSlug")
         lineupSlug: String = "news",
     ): Response<List<NewsModelItems?>?>?
+
 }

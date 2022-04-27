@@ -3,4 +3,15 @@
     <string name="headline">Headline :</string>
     <string name="published_date">Published date :</string>
     <string name="filter">Filter</string>
+
+    <plurals name="date_minutes">
+        <item quantity="zero">Now</item>
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+
+    <plurals name="date_hours">
+        <item quantity="one">An hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
 </resources>

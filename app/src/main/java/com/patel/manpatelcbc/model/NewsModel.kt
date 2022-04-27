@@ -37,7 +37,7 @@ data class NewsModelItem(
 ) : Serializable
 
 data class Image(
-    val square_140: String?
+    val imageLarge: String?
 ) : Serializable
 
 data class TypeAttribute(

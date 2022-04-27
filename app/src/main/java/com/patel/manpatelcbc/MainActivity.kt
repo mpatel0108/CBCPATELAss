@@ -1,6 +1,7 @@
 package com.patel.manpatelcbc
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,8 +32,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupRecyclerView()
 
+
         val newsRepository = NewsRepository(NewsDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
+
+
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
         viewModel.breakingNews.observe(this) {
            when(it) {

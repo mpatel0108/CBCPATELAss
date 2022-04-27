@@ -161,7 +161,7 @@ class NewsViewModel(
                 val response = newsRepository.getFilterBreakingNews(type)
                 filterBreakingNews.postValue(handleFilterBreakingNewsResponse(response))
             } else {
-                filterBreakingNews.postValue(Resource.Error("No internet connection"))
+                filterBreakingNews.postValue(Resource.Error("No Internet Connection"))
             }
         } catch(t: Throwable) {
             when(t) {
@@ -178,7 +178,7 @@ class NewsViewModel(
                 val response = newsRepository.getBreakingNews(lineupSlug)
                 breakingNews.postValue(handleBreakingNewsResponse(response))
             } else {
-                breakingNews.postValue(Resource.Error("No internet connection"))
+                breakingNews.postValue(Resource.Error("No Internet Connection"))
             }
         } catch(t: Throwable) {
             when(t) {
